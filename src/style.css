@@ -1,0 +1,15 @@
+@font-face {
+  font-family: ChareInk;
+  src: url('./assets/fonts/Spectral/Spectral-MediumItalic.ttf') format('ttf');
+}
+
+body {
+  font-family: Spectral sans-serif;
+  background-color: rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100vh;
+  background-image: url('/src/assets/images/Elden-Ring.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
