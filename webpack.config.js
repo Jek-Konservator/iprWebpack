@@ -1,12 +1,22 @@
 const path = require('path');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+
 module.exports = (env) => {
-  const mode = env.production ? 'production' : 'development';
+  const mode = env.mode;
+
+  const envPath =
+    env.mode === 'production'
+      ? './env/production.env'
+      : env.mode === 'development'
+      ? './env/dev.env'
+      : './env/default.env';
 
   return {
     mode: mode,
-
+    devtool: 'source-map',
     entry: path.resolve(__dirname, './src/index.tsx'),
 
     devServer: {
@@ -18,8 +28,8 @@ module.exports = (env) => {
     },
     output: {
       path: path.resolve(__dirname, './build'),
-      filename: 'bundle.js',
-      chunkFilename: '[name].js',
+      filename: 'bundle.[hash].js',
+      chunkFilename: '[name].[hash].js',
       assetModuleFilename: 'assets/[contenthash][ext][query]',
       clean: true,
     },
@@ -36,7 +46,7 @@ module.exports = (env) => {
           use: ['style-loader', 'css-loader'],
         },
         {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
           type: 'asset/resource',
         },
         {
@@ -86,6 +96,9 @@ module.exports = (env) => {
             },
           },
         }),
+        new TerserPlugin({
+          parallel: true,
+        }),
       ],
     },
     resolve: {
@@ -93,6 +106,12 @@ module.exports = (env) => {
       modules: ['src', 'node_modules'],
     },
 
-    plugins: [new HtmlWebpackPlugin({ template: 'public/index.html' })],
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: 'public/index.html',
+        favicon: './src/assets/images/logo.jpg',
+      }),
+      new Dotenv({ path: envPath }),
+    ],
   };
 };
